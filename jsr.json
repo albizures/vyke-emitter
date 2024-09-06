@@ -1,0 +1,12 @@
+{
+	"name": "@vyke/dom",
+	"version": "0.0.1",
+	"exports": {
+		".": "./src/index.ts",
+		"./core": "./src/core.ts",
+		"./config": "./src/plugins/config.ts",
+		"./watcher": "./src/plugins/watcher.ts",
+		"./unique-handlers": "./src/plugins/unique-handlers.ts"
+	},
+	"license": "MIT"
+}
