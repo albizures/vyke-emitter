@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { Emitter, EventHandlerMap } from './core'
+import type { Emitter, EventStore } from './core'
 import { createEmitter } from './core'
 
 const eventType: unique symbol = Symbol('eventType')
@@ -14,16 +14,16 @@ type Events = {
 	'Foo': unknown
 	[eventType]: unknown
 }
-let events: EventHandlerMap<any>, emitter: Emitter<Events>
+let events: EventStore<any>, emitter: Emitter<Events>
 
 beforeEach(() => {
 	emitter = createEmitter()
-	events = emitter.all
+	events = emitter.store
 })
 
 describe('properties', () => {
 	it('should expose the event handler map', () => {
-		expect(emitter).to.have.property('all')
+		expect(emitter).to.have.property('store')
 	})
 })
 

@@ -5,3 +5,7 @@ export type UseFn<TIn, TOut> = (plugin: EmitterPlugin<TIn, TOut>) => TOut
 export function use<TIn, TOut>(this: TIn, plugin: EmitterPlugin<TIn, TOut>): TOut {
 	return plugin(this as unknown as TIn)
 }
+
+export type WithUse = {
+	use<TIn, TOut>(this: TIn, plugin: EmitterPlugin<TIn, TOut>): TOut
+}

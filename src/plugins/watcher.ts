@@ -1,40 +1,33 @@
-import type { Emitter, Events, Unsubscribe } from '../core'
-import { type EmitterPlugin, use } from '../plugin'
-import type { InferEvents, Simplify } from '../types'
+import type { Events, Unsubscribe, WithEmit } from '../core'
+import type { InferEvents } from '../types'
 
 export type WatcherHandler<TEvents = Record<string, unknown>> = (...args: {
 	[TName in keyof TEvents]: [name: TName, eventValue: TEvents[TName]]
 }[keyof TEvents]) => void
 
-export type WithWatcher<
-	TEvents extends Events,
-	TEmitter extends Emitter<TEvents>,
-> = Simplify<Omit<TEmitter, 'use'> & {
+export type WithWatcher<TEvents extends Events, TOptions = never> = {
 	/**
 	 * Register an event handler for all events
 	 * @param handler Function to call in response to any event
 	 */
-	watch(handler: WatcherHandler<TEvents>): Unsubscribe
+	watch(handler: WatcherHandler<TEvents>, options?: TOptions): Unsubscribe
 	/**
 	 * Remove an event handler for all events or all handlers
 	 * @param [handler] Handler function to remove or omit to remove all handlers
 	 */
 	unwatch(handler?: WatcherHandler<TEvents>): void
+}
 
-	/**
-	 * Extend the emitter with a plugin
-	 */
-	use<TOut>(plugin: EmitterPlugin<WithWatcher<TEvents, TEmitter>, TOut>): TOut
-}>
+export type MaybeWithWatcher<TEvents extends Events> = Partial<WithWatcher<TEvents>>
 
 export function withWatcher<
-	TEmitter extends Emitter<TEvents>,
+	TEmitter extends WithEmit<TEvents>,
 	TEvents extends Events = InferEvents<TEmitter>,
->(source: TEmitter): WithWatcher<TEvents, TEmitter> {
+>(source: TEmitter): WithWatcher<TEvents> & TEmitter {
 	let handlers = new Set<WatcherHandler<TEvents>>()
 
 	const { emit } = source
-	const emitter: WithWatcher<TEvents, TEmitter> = {
+	const emitter = {
 		...source,
 		watch(handler: WatcherHandler<TEvents>) {
 			handlers.add(handler)
@@ -55,8 +48,11 @@ export function withWatcher<
 			emit(name, eventValue)
 			handlers.forEach((handler) => handler(name, eventValue))
 		},
-		use,
 	}
 
 	return emitter
+}
+
+export function hasWatcher(emitter: any): emitter is WithWatcher<Events> {
+	return emitter && typeof emitter.watch === 'function'
 }

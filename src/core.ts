@@ -1,6 +1,6 @@
-import { type EmitterPlugin, use } from './plugin'
-
-export type Unsubscribe = () => void
+import type { WithUse } from './plugin'
+import { use } from './plugin'
+import type { Simplify } from './types'
 
 export type EventName = string | symbol | number
 export type Events = Record<EventName, unknown>
@@ -10,22 +10,29 @@ export type Events = Record<EventName, unknown>
 export type EmitterHandler<TEvent> = (event: TEvent) => void
 
 // An array of all currently registered event handlers for a type
-export type EventHandlerList<TEvent> = Array<EmitterHandler<TEvent>>
+type EventHandlerStore<TEvent> = Array<EmitterHandler<TEvent>>
 
 // A map of event types and their corresponding event handlers.
-export type EventHandlerMap<TEvents extends Events> = {
-	[key in keyof TEvents]?: EventHandlerList<TEvents[key]>
+export type EventStore<TEvents extends Events> = {
+	[key in keyof TEvents]?: EventHandlerStore<TEvents[key]>
 }
 
-export type Emitter<TEvents extends Events> = {
-	all: EventHandlerMap<TEvents>
+export type WithStore<TEvents extends Events> = {
+	store: EventStore<TEvents>
+}
+
+export type Unsubscribe = () => void
+
+export type WithOn<TEvents extends Events, TOptions = never> = {
 	/**
 	 * Register an event handler with the given name
 	 * @param name Name of event to listen for
 	 * @param handler Function to call in response to given event
-	 * @memberOf mitt
 	 */
-	on<TName extends keyof TEvents>(name: TName, handler: EmitterHandler<TEvents[TName]>): Unsubscribe
+	on<TName extends keyof TEvents>(name: TName, handler: EmitterHandler<TEvents[TName]>, options?: TOptions): Unsubscribe
+}
+
+export type WithOff<TEvents extends Events> = {
 	/**
 	 * Remove an event handler with the given name.
 	 * If `handler` is omitted, all handlers of the given type are removed.
@@ -33,55 +40,58 @@ export type Emitter<TEvents extends Events> = {
 	 * @param [handler] Handler function to remove
 	 */
 	off<TName extends keyof TEvents>(name: TName, handler?: EmitterHandler<TEvents[TName]>): void
+}
+
+export type WithEmit<TEvents extends Events> = {
 	/**
 	 * Invoke all handlers with the given name.
 	 * @param name The event type to invoke
 	 * @param [event] Any value (object is recommended and powerful), passed to each handler
-	 * @memberOf mitt
 	 */
 	emit<TName extends keyof TEvents>(name: TName, event: TEvents[TName]): void
-
-	use<TOut>(plugin: EmitterPlugin<Emitter<TEvents>, TOut>): TOut
 }
+
+export type Emitter<TEvents extends Events> = Simplify<
+	& WithStore<TEvents>
+	& WithOn<TEvents>
+	& WithOff<TEvents>
+	& WithEmit<TEvents>
+	& WithUse
+>
 
 /**
  * functional event emitter / pubsub.
  */
 export function createEmitter<TEvents extends Events>(): Emitter<TEvents> {
-	let all: EventHandlerMap<TEvents> = Object.create(null)
+	let store: EventStore<TEvents> = Object.create(null)
 
 	let emitter: Emitter<TEvents> = {
-		all,
+		store,
 		on<TName extends keyof TEvents>(name: TName, handler: EmitterHandler<TEvents[TName]>) {
-			let handlers: Array<EmitterHandler<TEvents[TName]>> = all[name] ?? []
+			let handlers: Array<EmitterHandler<TEvents[TName]>> = store[name] ?? []
 
 			handlers.push(handler)
 
-			all[name] = handlers
+			store[name] = handlers
 
 			return () => {
 				removeItem(handlers, handler)
 			}
 		},
 		off<TName extends keyof TEvents>(name: TName, handler?: EmitterHandler<TEvents[TName]>) {
-			let handlers = all[name]
+			let handlers = store[name]
 
 			if (handlers) {
 				if (handler) {
 					removeItem(handlers, handler)
 				}
 				else {
-					all[name] = []
+					store[name] = []
 				}
 			}
 		},
 		emit<TName extends keyof TEvents>(name: TName, eventValue: TEvents[TName]) {
-			let handlers = all[name]
-			if (handlers) {
-				for (let handler of handlers) {
-					handler(eventValue)
-				}
-			}
+			store[name]?.forEach((handler) => handler(eventValue))
 		},
 		use,
 	}
@@ -92,3 +102,8 @@ export function createEmitter<TEvents extends Events>(): Emitter<TEvents> {
 function removeItem<TItem>(list: Array<TItem>, item: TItem) {
 	list.splice(list.indexOf(item) >>> 0, 1)
 }
+
+export type MaybeWithStore<TEvents extends Events> = Partial<WithStore<TEvents>>
+export type MaybeWithOn<TEvents extends Events> = Partial<WithOn<TEvents>>
+export type MaybeWithOff<TEvents extends Events> = Partial<WithOff<TEvents>>
+export type MaybeWithEmit<TEvents extends Events> = Partial<WithEmit<TEvents>>

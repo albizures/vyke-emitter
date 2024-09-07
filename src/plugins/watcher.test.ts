@@ -3,10 +3,24 @@ import { createEmitter } from '../core'
 import { withWatcher } from './watcher'
 
 it('should emit events to watchers', () => {
-	let { emit, watch } = createEmitter().use(withWatcher)
+	type Events = {
+		foo: 'foo'
+		bar: string
+	}
+	let { emit, watch } = createEmitter<Events>().use(withWatcher)
 
 	const watcher = vi.fn()
 	watch(watcher)
+
+	watch((name, event) => {
+		if (name === 'foo') {
+			assertType<'foo'>(event)
+		}
+
+		if (name === 'bar') {
+			assertType<string>(event)
+		}
+	})
 
 	emit('foo', 'foo')
 	emit('bar', 'bar')
