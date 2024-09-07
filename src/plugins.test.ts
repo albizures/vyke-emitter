@@ -3,7 +3,7 @@ import { createEmitter } from './core'
 import { withWatcher } from './plugins/watcher'
 import { withOnce } from './plugins/once'
 import { withUniqueHandlers } from './plugins/unique-handlers'
-import { createGroup, withOptions, withGroups } from './plugins/options'
+import { createGroup, withGroups, withOptions } from './plugins/options'
 
 it('should work with all plugins', () => {
 	type MyEvents = {
