@@ -71,18 +71,18 @@ export type WithConfig<
 	}
 >
 
-type ConfigHandlerConfig = {
+export type ConfigHandlerContext = {
 	name?: EventName
 	handler: EmitterHandler<any> | WatcherHandler<any>
 	emitter: Emitter<any>
 	off: Unsubscribe
 }
 
-type ConfigHandler<TConfig> = (value: TConfig, context: ConfigHandlerConfig) => void
+export type ConfigHandler<TConfig> = (value: TConfig, context: ConfigHandlerContext) => void
 
 type InferConfigValues<TConfigHandler> = TConfigHandler extends ConfigHandler<infer TConfigValues> ? TConfigValues : never
 
-type Plugin<TConfigHandler> = <
+export type WihtConfigPlugin<TConfigHandler> = <
 	TEmitter extends Emitter<TEvents>
 	& MaybeWithWatcher<TEvents, TEmitter>
 	& MaybeWithOnce<TEvents, TEmitter>,
@@ -108,7 +108,7 @@ type Plugin<TConfigHandler> = <
  */
 export function withConfig<
 	TConfigHandler extends ConfigHandler<any>,
->(configHandler: TConfigHandler): Plugin<TConfigHandler> {
+>(configHandler: TConfigHandler): WihtConfigPlugin<TConfigHandler> {
 	return <
 		TEmitter extends Emitter<TEvents> & MaybeWithWatcher<TEvents, TEmitter> & MaybeWithOnce<TEvents, TEmitter>,
 		TEvents extends Events = InferEvents<TEmitter>,
@@ -180,10 +180,10 @@ export function createGroup(): Group {
 	}
 }
 
-export type MaybeWithGroups = {
+type MaybeWithGroups = {
 	group?: Group
 }
 
-export function withGroups(values: MaybeWithGroups, context: ConfigHandlerConfig) {
+export function withGroups(values: MaybeWithGroups, context: ConfigHandlerContext) {
 	values.group?.add(context.off)
 }
