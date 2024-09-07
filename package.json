@@ -1,7 +1,7 @@
 {
 	"name": "@vyke/emitter",
 	"type": "module",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Functional and tiny (<1kb) functions to query and handle the dom in a safe, easy and TypeScript friendly.",
 	"author": "Jose Albizures <jose@albizures.com> (https://albizures.com/)",
 	"license": "MIT",
