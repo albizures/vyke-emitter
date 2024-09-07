@@ -184,9 +184,6 @@ export type MaybeWithGroups = {
 	group?: Group
 }
 
-export function withGroups(): ConfigHandler<MaybeWithGroups> {
-	const handler: ConfigHandler<MaybeWithGroups> = (values, context) => {
-		values.group?.add(context.off)
-	}
-	return handler
+export function withGroups(values: MaybeWithGroups, context: ConfigHandlerConfig) {
+	values.group?.add(context.off)
 }

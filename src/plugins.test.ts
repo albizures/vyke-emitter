@@ -16,7 +16,7 @@ it('should work with all plugins', () => {
 		.use(withOnce)
 		.use(withUniqueHandlers)
 		.use(withWatcher)
-		.use(withConfig(withGroups()))
+		.use(withConfig(withGroups))
 
 	const group = createGroup()
 	const onFoo = vi.fn()

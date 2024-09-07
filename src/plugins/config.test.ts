@@ -7,7 +7,7 @@ describe('with groups', () => {
 	it('should group handlers', () => {
 		const emitter = createEmitter()
 			.use(withWatcher)
-			.use(withConfig(withGroups()))
+			.use(withConfig(withGroups))
 
 		const group = createGroup()
 		const onFoo = vi.fn()
