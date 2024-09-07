@@ -41,3 +41,8 @@ export {
 	withOnce,
 	hasOnce,
 } from './plugins/once'
+
+export {
+	type WithBatch,
+	withBatch,
+} from './plugins/batch'

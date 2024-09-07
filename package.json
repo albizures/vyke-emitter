@@ -29,6 +29,14 @@
 		"./unique-handlers": {
 			"import": "./dist/plugins/unique-handlers.mjs",
 			"require": "./dist/plugins/unique-handlers.cjs"
+		},
+		"./once": {
+			"import": "./dist/plugins/once.mjs",
+			"require": "./dist/plugins/once.cjs"
+		},
+		"./batch": {
+			"import": "./dist/plugins/batch.mjs",
+			"require": "./dist/plugins/batch.cjs"
 		}
 	},
 	"main": "./dist/index.cjs",
