@@ -6,7 +6,9 @@
 		"./core": "./src/core.ts",
 		"./options": "./src/plugins/options.ts",
 		"./watcher": "./src/plugins/watcher.ts",
-		"./unique-handlers": "./src/plugins/unique-handlers.ts"
+		"./unique-handlers": "./src/plugins/unique-handlers.ts",
+		"./once": "./src/plugins/once.ts",
+		"./batch": "./src/plugins/batch.ts"
 	},
 	"license": "MIT"
 }
