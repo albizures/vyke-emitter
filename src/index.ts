@@ -28,13 +28,13 @@ export {
 
 export {
 	type Group,
-	type WithConfig,
-	type ConfigHandler,
-	type ConfigHandlerContext,
-	withConfig,
+	type WithOptions,
+	type OptionsHandler,
+	type OptionsHandlerContext,
+	withOptions,
 	withGroups,
 	createGroup,
-} from './plugins/config'
+} from './plugins/options'
 
 export {
 	type WithOnce,

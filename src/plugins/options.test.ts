@@ -2,8 +2,8 @@ import { assertType, describe, expect, it, vi } from 'vitest'
 import { createEmitter } from '../core'
 import type { WithWatcher } from './watcher'
 import { hasWatcher, withWatcher } from './watcher'
-import type { MaybeWithGroups } from './config'
-import { createGroup, withConfig, withGroups } from './config'
+import type { MaybeWithGroups } from './options'
+import { createGroup, withGroups, withOptions } from './options'
 import { hasOnce, withOnce } from './once'
 
 type MyEvents = {
@@ -15,7 +15,7 @@ type MyEvents = {
 describe('with groups', () => {
 	it('should group handlers', () => {
 		const emitter = createEmitter<MyEvents>()
-			.use(withConfig(withGroups))
+			.use(withOptions(withGroups))
 
 		const group = createGroup()
 		const onLogin = vi.fn()
@@ -47,7 +47,7 @@ describe('with groups', () => {
 		const emitter = createEmitter<MyEvents>()
 			.use(withOnce)
 			.use(withWatcher)
-			.use(withConfig(withGroups))
+			.use(withOptions(withGroups))
 
 		expect(hasWatcher(emitter)).toBe(true)
 		expect(hasOnce(emitter)).toBe(true)

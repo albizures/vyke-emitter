@@ -130,21 +130,21 @@ emitter.watch((name, value) => {
 emitter.emit('login', { username: 'albizures' })
 ```
 
-### withConfig
-Plugin to add a config object when listening to events.
-This plugin accepts a config handler that will be called when the handler is added.
+### withOptions
+Plugin to add a options object when listening to events.
+This plugin accepts a options handler that will be called when the handler is added.
 
-Built-in config handlers options:
+Built-in options handlers options:
 - `withGroups`: to group events by a string. This will be useful to remove all events from a group.
 
 ```ts
 import { createEmitter } from '@vyke/emitter'
-import { createGroup, withConfig, withGroups } from '@vyke/emitter/config'
+import { createGroup, withGroups, withOptions } from '@vyke/emitter/options'
 
 const authGroup = createGroup()
 
 const emitter = createEmitter()
-	.use(withConfig(withGroups))
+	.use(withOptions(withGroups))
 
 emitter.on('login', () => {
 	console.log('login event')
@@ -164,12 +164,12 @@ emitter.emit('logout')
 ### createEmitter
 functional event emitter / pubsub.
 
-### withConfig
-Plugin that allows for adding configuration to event handlers.
+### withOptions
+Plugin that allows for adding options to event handlers.
 
 ```ts
-const withLog = withConfig((config, { name, handler }) => {
-	if (config.log) {
+const withLog = withOptions((options, { name, handler }) => {
+	if (options.log) {
 		console.log(`Adding handler for ${name}`)
 	}
 })

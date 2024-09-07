@@ -3,56 +3,58 @@ import type { InferEvents, Simplify } from '../types'
 import { type MaybeWithOnce, type WithOnce, hasOnce } from './once'
 import { type MaybeWithWatcher, type WatcherHandler, type WithWatcher, hasWatcher } from './watcher'
 
-type MaybeWithOnceAndConfig<
+type MaybeWithOnceAndOptions<
 	TEvents extends Events,
-	TEmitter, TConfig,
+	TEmitter, TOptions,
 > = TEmitter extends WithOnce<TEvents>
-	? WithOnce<TEvents, TConfig>
+	? WithOnce<TEvents, TOptions>
 	: object
 
-type MaybeWithWatcherAndConfig<
+type MaybeWithWatcherAndOptions<
 	TEvents extends Events,
 	TEmitter,
-	TConfig,
+	TOptions,
 > = TEmitter extends WithWatcher<TEvents>
-	? WithWatcher<TEvents, TConfig>
+	? WithWatcher<TEvents, TOptions>
 	: object
 
-export type ConfigHandlerContext<TEmitter> = {
+export type OptionsHandlerContext<TEmitter> = {
 	name?: EventName
 	handler: EmitterHandler<any> | WatcherHandler<any>
 	emitter: TEmitter
 	off: Unsubscribe
 }
 
-export type ConfigHandler<TConfig, TEmitter> = (value: TConfig, context: ConfigHandlerContext<TEmitter>) => void
+export type OptionsHandler<TOptions, TEmitter> = (value: TOptions, context: OptionsHandlerContext<TEmitter>) => void
 
-type InferConfigValues<TConfigHandler> = TConfigHandler extends ConfigHandler<infer TConfigValues, any> ? TConfigValues : never
+type InferOptions<TOptionsHandler> = TOptionsHandler extends OptionsHandler<infer TOptionsValues, any>
+	? TOptionsValues
+	: never
 
-export type WithConfig<TEmitter, TConfig, TEvents extends Events = InferEvents<TEmitter>> = Simplify<
+export type WithOptions<TEmitter, TOptions, TEvents extends Events = InferEvents<TEmitter>> = Simplify<
 	& TEmitter
-	& WithOn<TEvents, TConfig>
-	& MaybeWithWatcherAndConfig<TEvents, TEmitter, TConfig>
-	& MaybeWithOnceAndConfig<TEvents, TEmitter, TConfig>
+	& WithOn<TEvents, TOptions>
+	& MaybeWithWatcherAndOptions<TEvents, TEmitter, TOptions>
+	& MaybeWithOnceAndOptions<TEvents, TEmitter, TOptions>
 >
 
 type EmitterToExtend<TEvents extends Events> = WithOn<TEvents>
 	& MaybeWithWatcher<TEvents>
 	& MaybeWithOnce<TEvents>
 
-export type WihtConfigPlugin<TConfig> = <
+export type WihtOptionsPlugin<TOptions> = <
 	TEmitter extends EmitterToExtend<TEvents>,
 	TEvents extends Events = InferEvents<TEmitter>,
->(source: TEmitter) => WithConfig<TEmitter, TConfig, TEvents>
+>(source: TEmitter) => WithOptions<TEmitter, TOptions, TEvents>
 
 /**
- * Plugin that allows for adding configuration to event handlers.
+ * Plugin that allows for adding options to event handlers.
  *
- * @param configHandler a function that will be called with the config object and the context
+ * @param optionHandler a function that will be called with the options object and the context
  * @example
  * ```ts
- * const withLog = withConfig((config, { name, handler }) => {
- * 	if (config.log) {
+ * const withLog = withOptions((options, { name, handler }) => {
+ * 	if (options.log) {
  * 		console.log(`Adding handler for ${name}`)
  * 	}
  * })
@@ -63,12 +65,12 @@ export type WihtConfigPlugin<TConfig> = <
  * // Logs: Adding handler for foo
  * ```
  */
-export function withConfig<
-	TConfigHandler extends ConfigHandler<any, any>,
->(configHandler: TConfigHandler): WihtConfigPlugin<InferConfigValues<TConfigHandler>> {
-	type TConfig = InferConfigValues<TConfigHandler>
+export function withOptions<
+	THandler extends OptionsHandler<any, any>,
+>(optionHandler: THandler): WihtOptionsPlugin<InferOptions<THandler>> {
+	type TOptions = InferOptions<THandler>
 
-	const plugin: WihtConfigPlugin<TConfig> = <
+	const plugin: WihtOptionsPlugin<TOptions> = <
 		TEmitter extends EmitterToExtend<TEvents>,
 		TEvents extends Events = InferEvents<TEmitter>,
 	>(source: TEmitter) => {
@@ -76,10 +78,10 @@ export function withConfig<
 
 		let emitter = {
 			...source,
-			on<TName extends keyof TEvents>(name: TName, handler: EmitterHandler<TEvents[TName]>, config?: TConfig): Unsubscribe {
+			on<TName extends keyof TEvents>(name: TName, handler: EmitterHandler<TEvents[TName]>, options?: TOptions): Unsubscribe {
 				const off = on(name, handler)
-				if (config) {
-					configHandler(config, {
+				if (options) {
+					optionHandler(options, {
 						name,
 						handler,
 						emitter: source,
@@ -95,10 +97,10 @@ export function withConfig<
 			const { once } = emitter
 			emitter = {
 				...emitter,
-				once<TName extends keyof TEvents>(name: TName, handler: EmitterHandler<TEvents[TName]>, config?: TConfig): Unsubscribe {
+				once<TName extends keyof TEvents>(name: TName, handler: EmitterHandler<TEvents[TName]>, options?: TOptions): Unsubscribe {
 					const off = once(name, handler)
-					if (config) {
-						configHandler(config, {
+					if (options) {
+						optionHandler(options, {
 							name,
 							handler,
 							emitter: source,
@@ -114,10 +116,10 @@ export function withConfig<
 				const { watch } = emitter
 				emitter = {
 					...emitter,
-					watch(handler: WatcherHandler<TEvents>, config?: TConfig): Unsubscribe {
+					watch(handler: WatcherHandler<TEvents>, options?: TOptions): Unsubscribe {
 						const off = watch(handler)
-						if (config) {
-							configHandler(config, {
+						if (options) {
+							optionHandler(options, {
 								handler,
 								emitter: source,
 								off,
@@ -130,7 +132,7 @@ export function withConfig<
 			}
 		}
 
-		return emitter as WithConfig<TEmitter, TConfig, TEvents>
+		return emitter as WithOptions<TEmitter, TOptions, TEvents>
 	}
 	return plugin
 }
@@ -156,6 +158,6 @@ export type MaybeWithGroups = {
 	group?: Group
 }
 
-export function withGroups(values: MaybeWithGroups, context: ConfigHandlerContext<unknown>) {
-	values.group?.add(context.off)
+export function withGroups(options: MaybeWithGroups, context: OptionsHandlerContext<unknown>) {
+	options.group?.add(context.off)
 }

@@ -3,7 +3,7 @@ import { createEmitter } from './core'
 import { withWatcher } from './plugins/watcher'
 import { withOnce } from './plugins/once'
 import { withUniqueHandlers } from './plugins/unique-handlers'
-import { createGroup, withConfig, withGroups } from './plugins/config'
+import { createGroup, withOptions, withGroups } from './plugins/options'
 
 it('should work with all plugins', () => {
 	type MyEvents = {
@@ -16,7 +16,7 @@ it('should work with all plugins', () => {
 		.use(withOnce)
 		.use(withUniqueHandlers)
 		.use(withWatcher)
-		.use(withConfig(withGroups))
+		.use(withOptions(withGroups))
 
 	const group = createGroup()
 	const onFoo = vi.fn()

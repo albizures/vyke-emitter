@@ -4,7 +4,7 @@
 	"exports": {
 		".": "./src/index.ts",
 		"./core": "./src/core.ts",
-		"./config": "./src/plugins/config.ts",
+		"./options": "./src/plugins/options.ts",
 		"./watcher": "./src/plugins/watcher.ts",
 		"./unique-handlers": "./src/plugins/unique-handlers.ts"
 	},

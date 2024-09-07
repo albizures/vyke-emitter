@@ -18,9 +18,9 @@
 			"import": "./dist/core.mjs",
 			"require": "./dist/core.cjs"
 		},
-		"./config": {
-			"import": "./dist/plugins/config.mjs",
-			"require": "./dist/plugins/config.cjs"
+		"./options": {
+			"import": "./dist/plugins/options.mjs",
+			"require": "./dist/plugins/options.cjs"
 		},
 		"./watcher": {
 			"import": "./dist/plugins/watcher.mjs",
