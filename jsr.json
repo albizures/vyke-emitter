@@ -1,6 +1,6 @@
 {
 	"name": "@vyke/emitter",
-	"version": "0.0.3",
+	"version": "0.1.0",
 	"exports": {
 		".": "./src/index.ts",
 		"./core": "./src/core.ts",
