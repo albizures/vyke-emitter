@@ -1,5 +1,5 @@
 {
-	"name": "@vyke/dom",
+	"name": "@vyke/emitter",
 	"version": "0.0.2",
 	"exports": {
 		".": "./src/index.ts",
