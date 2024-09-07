@@ -42,7 +42,7 @@ type EmitterToExtend<TEvents extends Events> = WithOn<TEvents>
 	& MaybeWithWatcher<TEvents>
 	& MaybeWithOnce<TEvents>
 
-export type WihtOptionsPlugin<TOptions> = <
+type WihtOptionsPlugin<TOptions> = <
 	TEmitter extends EmitterToExtend<TEvents>,
 	TEvents extends Events = InferEvents<TEmitter>,
 >(source: TEmitter) => WithOptions<TEmitter, TOptions, TEvents>

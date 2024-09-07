@@ -102,8 +102,3 @@ export function createEmitter<TEvents extends Events>(): Emitter<TEvents> {
 function removeItem<TItem>(list: Array<TItem>, item: TItem) {
 	list.splice(list.indexOf(item) >>> 0, 1)
 }
-
-export type MaybeWithStore<TEvents extends Events> = Partial<WithStore<TEvents>>
-export type MaybeWithOn<TEvents extends Events> = Partial<WithOn<TEvents>>
-export type MaybeWithOff<TEvents extends Events> = Partial<WithOff<TEvents>>
-export type MaybeWithEmit<TEvents extends Events> = Partial<WithEmit<TEvents>>

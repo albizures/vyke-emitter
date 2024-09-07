@@ -55,7 +55,6 @@
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^2.27.3",
-		"@testing-library/jest-dom": "^6.5.0",
 		"@vyke/jsr-sync": "^0.0.3",
 		"@vyke/tsdocs": "^0.0.8",
 		"eslint": "^9.9.1",
